@@ -83,7 +83,8 @@ export default function Map() {
 
     const fetchStationData = async (stationId, stationName) => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/station/${stationId}`)
+            const API_BASE = import.meta.env.VITE_API_BASE
+            const res = await fetch(`${API_BASE}/api/station/${stationId}`)
             if (!res.ok) throw new Error("Server error")
             const data = await res.json()
             setStationData(prev => ({ ...prev, [stationName]: data }))
