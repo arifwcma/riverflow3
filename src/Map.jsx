@@ -47,7 +47,6 @@ export default function Map() {
 
     const maskFeature = useMemo(() => {
         if (!boundary || !boundary.features || boundary.features.length === 0) return null
-
         const worldRing = [
             [-180, -90],
             [180, -90],
@@ -55,7 +54,6 @@ export default function Map() {
             [-180, 90],
             [-180, -90]
         ]
-
         const holes = []
         for (const f of boundary.features) {
             const g = f.geometry
@@ -71,7 +69,6 @@ export default function Map() {
             }
         }
         if (holes.length === 0) return null
-
         return {
             type: "Feature",
             geometry: {
@@ -97,7 +94,6 @@ export default function Map() {
         const detail = detailsLookup[stationName]
         const display = detail?.display || stationName
         const data = stationData[stationName]
-
         if (!data) return <div>Loading...</div>
 
         const getValue = (label) => {
@@ -105,7 +101,9 @@ export default function Map() {
             return item ? `${item.v} ${item.units}` : "N/A"
         }
 
-        const updated = data[0]?.dt || ""
+        const updated = data[0]?.dt
+            ? new Date(data[0].dt).toLocaleString("en-AU", { dateStyle: "short", timeStyle: "medium" })
+            : ""
 
         return (
             <div>
