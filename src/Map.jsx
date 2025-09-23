@@ -125,12 +125,18 @@ export default function Map() {
                         href="#"
                         onClick={(e) => {
                             e.preventDefault()
-                            console.log("Opening More popup", stationId, stationName) // Debug
-                            setMoreStation({ id: stationId, key: stationName })      // store key
+                            const match = stations.find(s => s.station_name === stationName)
+                            setMoreStation({
+                                id: stationId,
+                                key: stationName,
+                                lat: parseFloat(match?.station_latitude),
+                                lng: parseFloat(match?.station_longitude),
+                            })
                         }}
                     >
                         More information
                     </a>
+
                 </div>
             </div>
         )
@@ -203,28 +209,18 @@ export default function Map() {
                 )
             })}
 
-            {moreStation && (() => {
-                const detail = detailsLookup[moreStation.key]
-                if (!detail) {
-                    console.log("No details found for", moreStation)
-                    return null
-                }
-                const lat = parseFloat(detail.station_latitude)
-                const lng = parseFloat(detail.station_longitude)
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-                    console.log("Invalid coords for", moreStation, detail)
-                    return null
-                }
+            {moreStation && Number.isFinite(moreStation.lat) && Number.isFinite(moreStation.lng) && (
+                <Popup
+                    position={[moreStation.lat, moreStation.lng]}
+                    onClose={() => setMoreStation(null)}
+                >
+                    <More
+                        stationId={moreStation.id}
+                        stationName={detailsLookup[moreStation.key]?.display || moreStation.key}
+                    />
+                </Popup>
+            )}
 
-                return (
-                    <Popup position={[lat, lng]} onClose={() => setMoreStation(null)}>
-                        <More
-                            stationId={moreStation.id}
-                            stationName={detail.display || moreStation.key}
-                        />
-                    </Popup>
-                )
-            })()}
         </MapContainer>
     )
 }
