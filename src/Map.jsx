@@ -125,8 +125,8 @@ export default function Map() {
                         href="#"
                         onClick={(e) => {
                             e.preventDefault()
-                            // store key (stationName) not display
-                            setMoreStation({ id: stationId, key: stationName })
+                            console.log("Opening More popup", stationId, stationName) // Debug
+                            setMoreStation({ id: stationId, key: stationName })      // store key
                         }}
                     >
                         More information
@@ -205,18 +205,22 @@ export default function Map() {
 
             {moreStation && (() => {
                 const detail = detailsLookup[moreStation.key]
-                const lat = parseFloat(detail?.station_latitude)
-                const lng = parseFloat(detail?.station_longitude)
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+                if (!detail) {
+                    console.log("No details found for", moreStation)
+                    return null
+                }
+                const lat = parseFloat(detail.station_latitude)
+                const lng = parseFloat(detail.station_longitude)
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                    console.log("Invalid coords for", moreStation, detail)
+                    return null
+                }
 
                 return (
-                    <Popup
-                        position={[lat, lng]}
-                        onClose={() => setMoreStation(null)}
-                    >
+                    <Popup position={[lat, lng]} onClose={() => setMoreStation(null)}>
                         <More
                             stationId={moreStation.id}
-                            stationName={detail?.display || moreStation.key}
+                            stationName={detail.display || moreStation.key}
                         />
                     </Popup>
                 )
