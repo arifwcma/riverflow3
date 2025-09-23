@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet"
+import React, { useEffect, useMemo, useState } from "react"
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Pane } from "react-leaflet"
 import L from "leaflet"
 import stations from "../stations_15.json"
 import stationStatus from "../station_status.json"
@@ -37,10 +37,48 @@ export default function Map() {
             .then(data => setBoundary(data))
     }, [])
 
-    const statusLookup = stationStatus.stations.reduce((acc, s) => {
-        acc[s.name] = s.status
-        return acc
-    }, {})
+    const statusLookup = useMemo(() => {
+        return stationStatus.stations.reduce((acc, s) => {
+            acc[s.name] = s.status
+            return acc
+        }, {})
+    }, [])
+
+    const maskFeature = useMemo(() => {
+        if (!boundary || !boundary.features || boundary.features.length === 0) return null
+
+        const worldRing = [
+            [-180, -90],
+            [180, -90],
+            [180, 90],
+            [-180, 90],
+            [-180, -90]
+        ]
+
+        const holes = []
+        for (const f of boundary.features) {
+            const g = f.geometry
+            if (!g) continue
+            if (g.type === "Polygon") {
+                if (g.coordinates && g.coordinates[0]) holes.push(g.coordinates[0])
+            } else if (g.type === "MultiPolygon") {
+                if (g.coordinates) {
+                    for (const poly of g.coordinates) {
+                        if (poly && poly[0]) holes.push(poly[0])
+                    }
+                }
+            }
+        }
+        if (holes.length === 0) return null
+
+        return {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [worldRing, ...holes]
+            }
+        }
+    }, [boundary])
 
     return (
         <MapContainer
@@ -55,23 +93,41 @@ export default function Map() {
             keyboard={false}
             touchZoom={false}
         >
-
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="© OpenStreetMap contributors"
             />
+
             {boundary && (
                 <GeoJSON
                     data={boundary}
                     style={{ color: "blue", weight: 2, fillOpacity: 0 }}
                 />
             )}
+
+            {maskFeature && (
+                <Pane name="mask-pane" style={{ zIndex: 350 }}>
+                    <GeoJSON
+                        data={maskFeature}
+                        style={{
+                            fillColor: "white",
+                            fillOpacity: 1,
+                            color: "none"
+                        }}
+                        pathOptions={{ fillRule: "evenodd" }}
+                    />
+                </Pane>
+            )}
+
             {stations.map((loc, idx) => {
                 const isActive = statusLookup[loc.station_name] === 1
+                const lat = parseFloat(loc.station_latitude)
+                const lng = parseFloat(loc.station_longitude)
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
                 return (
                     <Marker
                         key={idx}
-                        position={[parseFloat(loc.station_latitude), parseFloat(loc.station_longitude)]}
+                        position={[lat, lng]}
                         icon={isActive ? activeIcon : inactiveIcon}
                     >
                         <Popup>
