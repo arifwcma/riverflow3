@@ -7,11 +7,11 @@ export default function More({ stationId, stationName }) {
     const [cond, setCond] = useState([])
 
     useEffect(() => {
-        const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3001"
+        const API_BASE = import.meta.env.VITE_API_BASE
 
         const load = async (endpoint, setter) => {
             try {
-                const res = await fetch(`${API_BASE}/api/${endpoint}/${stationId}`)
+                const res = await fetch(`${API_BASE}/api/${endpoint}/${stationId}?t=${Date.now()}`)
                 const raw = await res.json()
                 setter(raw.map(d => [new Date(d.dt).getTime(), d.v]))
             } catch (e) {
