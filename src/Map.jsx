@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Pane } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Pane, Tooltip } from "react-leaflet"
 import L from "leaflet"
 import stations from "../stations_15.json"
-import stationStatus from "../station_status.json"
+import stationDetails from "../station_details.json"
 
 const bounds = [
     [-37.36809668716929, 140.96378317173532],
@@ -30,6 +30,7 @@ const inactiveIcon = new L.Icon({
 
 export default function Map() {
     const [boundary, setBoundary] = useState(null)
+    const [stationData, setStationData] = useState({})
 
     useEffect(() => {
         fetch("/wcma_boundary.geojson")
@@ -37,9 +38,9 @@ export default function Map() {
             .then(data => setBoundary(data))
     }, [])
 
-    const statusLookup = useMemo(() => {
-        return stationStatus.stations.reduce((acc, s) => {
-            acc[s.name] = s.status
+    const detailsLookup = useMemo(() => {
+        return stationDetails.stations.reduce((acc, s) => {
+            acc[s.name] = s
             return acc
         }, {})
     }, [])
@@ -80,6 +81,48 @@ export default function Map() {
         }
     }, [boundary])
 
+    const fetchStationData = async (stationId, stationName) => {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/station/${stationId}`)
+            if (!res.ok) throw new Error("Server error")
+            const data = await res.json()
+            setStationData(prev => ({ ...prev, [stationName]: data }))
+        } catch (err) {
+            console.error("Error fetching station data", err)
+        }
+    }
+
+    const renderPopupContent = (stationName, stationId) => {
+        const detail = detailsLookup[stationName]
+        const display = detail?.display || stationName
+        const data = stationData[stationName]
+
+        if (!data) return <div>Loading...</div>
+
+        const getValue = (label) => {
+            const item = data.find(d => d.parameterLabel.includes(label))
+            return item ? `${item.v} ${item.units}` : "N/A"
+        }
+
+        const updated = data[0]?.dt || ""
+
+        return (
+            <div>
+                <b>{display}</b>
+                <br /><br />
+                <b>Water Flow</b> {getValue("Stream Discharge")}
+                <br />
+                <b>Water Level</b> {getValue("Stream Water Level")}
+                <br />
+                <b>Dissolved Oxygen</b> {getValue("Dissolved Oxygen")}
+                <br />
+                <b>Conductivity</b> {getValue("Conductivity")}
+                <br /><br />
+                <small>Last Updated {updated}</small>
+            </div>
+        )
+    }
+
     return (
         <MapContainer
             style={{ height: "600px", width: "100%" }}
@@ -94,10 +137,7 @@ export default function Map() {
             touchZoom={false}
             attributionControl={false}
         >
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-
-            />
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
             {boundary && (
                 <GeoJSON
@@ -121,21 +161,31 @@ export default function Map() {
             )}
 
             {stations.map((loc, idx) => {
-                const isActive = statusLookup[loc.station_name] === 1
+                const detail = detailsLookup[loc.station_name]
+                const isActive = detail?.status === 1
                 const lat = parseFloat(loc.station_latitude)
                 const lng = parseFloat(loc.station_longitude)
                 if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+
                 return (
                     <Marker
                         key={idx}
                         position={[lat, lng]}
                         icon={isActive ? activeIcon : inactiveIcon}
+                        eventHandlers={
+                            isActive
+                                ? {
+                                    click: () => fetchStationData(loc.station, loc.station_name)
+                                }
+                                : {}
+                        }
                     >
-                        <Popup>
-                            <b>{loc.station_name}</b>
-                            <br />
-                            Status: {isActive ? "Active" : "Inactive"}
-                        </Popup>
+                        <Tooltip>{detail?.display || loc.station_name}</Tooltip>
+                        {isActive && (
+                            <Popup>
+                                {renderPopupContent(loc.station_name, loc.station)}
+                            </Popup>
+                        )}
                     </Marker>
                 )
             })}
