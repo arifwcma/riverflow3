@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON, Pane, Tooltip } from "
 import L from "leaflet"
 import stations from "../stations_15.json"
 import stationDetails from "../station_details.json"
+import More from "./More.jsx"
 
 const bounds = [
     [-37.36809668716929, 140.96378317173532],
@@ -31,6 +32,7 @@ const inactiveIcon = new L.Icon({
 export default function Map() {
     const [boundary, setBoundary] = useState(null)
     const [stationData, setStationData] = useState({})
+    const [moreStation, setMoreStation] = useState(null)
 
     useEffect(() => {
         fetch("/wcma_boundary.geojson")
@@ -118,6 +120,18 @@ export default function Map() {
                 <b>Conductivity</b> {getValue("Conductivity")}
                 <br /><br />
                 <small>Last Updated {updated}</small>
+                <div style={{ textAlign: "center", marginTop: 10 }}>
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            // store key (stationName) not display
+                            setMoreStation({ id: stationId, key: stationName })
+                        }}
+                    >
+                        More information
+                    </a>
+                </div>
             </div>
         )
     }
@@ -188,6 +202,25 @@ export default function Map() {
                     </Marker>
                 )
             })}
+
+            {moreStation && (() => {
+                const detail = detailsLookup[moreStation.key]
+                const lat = parseFloat(detail?.station_latitude)
+                const lng = parseFloat(detail?.station_longitude)
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+
+                return (
+                    <Popup
+                        position={[lat, lng]}
+                        onClose={() => setMoreStation(null)}
+                    >
+                        <More
+                            stationId={moreStation.id}
+                            stationName={detail?.display || moreStation.key}
+                        />
+                    </Popup>
+                )
+            })()}
         </MapContainer>
     )
 }
