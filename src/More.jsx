@@ -7,18 +7,18 @@ export default function More({ stationId, stationName }) {
     const [cond, setCond] = useState([])
 
     useEffect(() => {
+        const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3001"
+
         const load = async (endpoint, setter) => {
             try {
-                const res = await fetch(`/api/${endpoint}/${stationId}`)
+                const res = await fetch(`${API_BASE}/api/${endpoint}/${stationId}`)
                 const raw = await res.json()
-                const cutoff = new Date()
-                cutoff.setMonth(cutoff.getMonth() - 3)
-                const filtered = raw.filter(d => new Date(d.dt) >= cutoff)
-                setter(filtered.map(d => [new Date(d.dt).getTime(), d.v]))
+                setter(raw.map(d => [new Date(d.dt).getTime(), d.v]))
             } catch (e) {
                 console.error("Error fetching", endpoint, e)
             }
         }
+
         load("flow", setFlow)
         load("oxygen", setOxygen)
         load("conductivity", setCond)
