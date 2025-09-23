@@ -1,0 +1,64 @@
+{
+  "stations": [
+    {
+      "name": "WIMMERA RIVER @ TARRANYURK",
+      "status": 1
+    },
+    {
+      "name": "WIMMERA RIVER @ LOCHIEL RAILWAY BRIDGE",
+      "status": 1
+    },
+    {
+      "name": "WIMMERA RIVER @ U/S OF DIMBOOLA",
+      "status": 1
+    },
+    {
+      "name": "TAYLORS LAKE CHANNEL OUTFALL @ MARMA STATE FOREST",
+      "status": 0
+    },
+    {
+      "name": "WIMMERA RIVER @ HORSHAM",
+      "status": 1
+    },
+    {
+      "name": "MCKENZIE CREEK @ D/S OF SEWERAGE OUTLET",
+      "status": 1
+    },
+    {
+      "name": "LAKE TOOLONDO HG @ LAKE TOOLONDO",
+      "status": 0
+    },
+    {
+      "name": "BUNGALALLY CREEK @ MCKENZIE CREEK",
+      "status": 0
+    },
+    {
+      "name": "BURNT CREEK @ WONWONDAH EAST",
+      "status": 1
+    },
+    {
+      "name": "WEATHER STATION @ WARTOOK RESERVOIR",
+      "status": 0
+    },
+    {
+      "name": "WEATHER STATION @ BELLFIELD RESERVOIR",
+      "status": 0
+    },
+    {
+      "name": "WIMMERA RIVER @ U/S OF GLENORCHY WEIR",
+      "status": 1
+    },
+    {
+      "name": "MOUNT WILLIAM CREEK @ LAKE LONSDALE (TAIL GAUGE)",
+      "status": 1
+    },
+    {
+      "name": "MOUNT WILLIAM CREEK @ LAKE LONSDALE (HEAD GAUGE)",
+      "status": 0
+    },
+    {
+      "name": "LAKE FYANS",
+      "status": 0
+    }
+  ]
+}
