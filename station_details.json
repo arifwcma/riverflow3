@@ -2,62 +2,77 @@
   "stations": [
     {
       "name": "WIMMERA RIVER @ TARRANYURK",
+      "display": "Wimmera River at Tarranyurk Water Flow",
       "status": 1
     },
     {
       "name": "WIMMERA RIVER @ LOCHIEL RAILWAY BRIDGE",
+      "display": "Wimmera River at Lochiel Railway Bridge Water Flow",
       "status": 1
     },
     {
       "name": "WIMMERA RIVER @ U/S OF DIMBOOLA",
+      "display": "Wimmera River Upstream of Dimboola (Wail) Water Flow",
       "status": 1
     },
     {
       "name": "TAYLORS LAKE CHANNEL OUTFALL @ MARMA STATE FOREST",
+      "display": "Taylor's Lake Outfall",
       "status": 0
     },
     {
       "name": "WIMMERA RIVER @ HORSHAM",
+      "display": "Wimmera River at Horsham (Walmer)",
       "status": 1
     },
     {
       "name": "MCKENZIE CREEK @ D/S OF SEWERAGE OUTLET",
+      "display": "MacKenzie River at McKenzie Creek Reserve Water Flow",
       "status": 1
     },
     {
       "name": "LAKE TOOLONDO HG @ LAKE TOOLONDO",
+      "display": "Burnt CReek at Toolondo Channel",
       "status": 0
     },
     {
       "name": "BUNGALALLY CREEK @ MCKENZIE CREEK",
+      "display": "Bungalally Creek at Toolondo Channel",
       "status": 0
     },
     {
       "name": "BURNT CREEK @ WONWONDAH EAST",
+      "display": "Burnt Creek at Wonwondah",
       "status": 1
     },
     {
       "name": "WEATHER STATION @ WARTOOK RESERVOIR",
+      "display": "Distribution Heads",
       "status": 0
     },
     {
       "name": "WEATHER STATION @ BELLFIELD RESERVOIR",
+      "display": "Dad and Dave Weir",
       "status": 0
     },
     {
       "name": "WIMMERA RIVER @ U/S OF GLENORCHY WEIR",
+      "display": "Wimmera River at Glenorchy Weir",
       "status": 1
     },
     {
       "name": "MOUNT WILLIAM CREEK @ LAKE LONSDALE (TAIL GAUGE)",
+      "display": "Mt William Creek at Lake Lonsdale (Tail Gauge) Water Flow",
       "status": 1
     },
     {
       "name": "MOUNT WILLIAM CREEK @ LAKE LONSDALE (HEAD GAUGE)",
+      "display": "Lake Lonsdale Outlet",
       "status": 0
     },
     {
       "name": "LAKE FYANS",
+      "display": "Fyans Outlet Channel to Mt William Creek",
       "status": 0
     }
   ]
