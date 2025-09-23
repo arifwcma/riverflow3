@@ -92,10 +92,11 @@ export default function Map() {
             boxZoom={false}
             keyboard={false}
             touchZoom={false}
+            attributionControl={false}
         >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="© OpenStreetMap contributors"
+
             />
 
             {boundary && (
